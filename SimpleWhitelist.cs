@@ -5,14 +5,14 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("Whitelist", "Wolfleader101", "0.4.1")]
-    [Description("Throw an ender pearl and teleport to its location")]
+    [Info("SimpleWhitelist", "Wolfleader101", "1.0.0")]
+    [Description("Manage your whitelist with simple commands")]
     class SimpleWhitelist : CovalencePlugin
     {
         #region Variables
 
         private PluginConfig config;
-        public const string enderPearlPerms = "enderpearl.use";
+        public const string WhitelistPerms = "simplewhitelist.use";
 
         #endregion
 
@@ -22,34 +22,12 @@ namespace Oxide.Plugins
         {
             config = Config.ReadObject<PluginConfig>();
 
-            permission.RegisterPermission(enderPearlPerms, this);
-        }
-
-        void OnPlayerAttack(BasePlayer attacker, HitInfo info)
-        {
-            if (info == null) return;
-            if (!permission.UserHasPermission(attacker.UserIDString, enderPearlPerms)) return;
-            if (!info.IsProjectile()) return;
-            
-            //var weapon = info.Weapon.GetItem();  // ONLY WORKS FOR GUNS
-            //Puts(info.WeaponPrefab.name);
-
-            string entName = info.WeaponPrefab.name;
-            if (entName != config.enderpearl) return;
-
-            Teleport(attacker, info);
+            permission.RegisterPermission(WhitelistPerms, this);
         }
 
         #endregion
 
-        #region Custom Methods
-
-        void Teleport(BasePlayer attacker, HitInfo info)
-        {
-            Vector3 entLoc = info.HitPositionWorld;
-            attacker.transform.position = entLoc;
-            info.ProjectilePrefab.conditionLoss += 1f;
-        }
+        #region Methods
 
         #endregion
 
@@ -57,14 +35,14 @@ namespace Oxide.Plugins
 
         private class PluginConfig
         {
-            [JsonProperty("Enderpearl")] public string enderpearl { get; set; }
+            //[JsonProperty("Enderpearl")] public string enderpearl { get; set; }
         }
 
         private PluginConfig GetDefaultConfig()
         {
             return new PluginConfig
             {
-                enderpearl = "snowball.entity"
+              //  enderpearl = "snowball.entity"
             };
         }
 
