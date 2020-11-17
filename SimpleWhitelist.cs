@@ -22,7 +22,6 @@ namespace Oxide.Plugins
         #endregion
 
         #region Hooks
-
         private void Init()
         {
             config = Config.ReadObject<PluginConfig>();
