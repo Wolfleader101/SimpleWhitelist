@@ -18,10 +18,10 @@ The configuration doesn't need to be touched at all, instead feel free to use th
 
 ```json
 {
-  "Whitelisted": [ // array of whitelisted players
+  "Whitelisted": [
     {
-      "name": "Wolfleader", //players name
-      "steamId": "76561198144671984" //players steam64 id
+      "name": "Wolfleader",
+      "steamId": "76561198144671984"
     }
   ]
 }
