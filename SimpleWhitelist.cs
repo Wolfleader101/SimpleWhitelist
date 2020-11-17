@@ -56,10 +56,24 @@ namespace Oxide.Plugins
             {
                 List<BasePlayer> playerList = BasePlayer.allPlayerList as List<BasePlayer>;
                 var foundPlayer = playerList.Find(ply => ply.UserIDString == steamIDString);
-                PlayerData playerData = new PlayerData(foundPlayer);
+                PlayerData playerData;
+                if (foundPlayer == null)
+                {
+                     playerData = new PlayerData(steamIDString);
+                }
+                else
+                {
+                     playerData = new PlayerData(foundPlayer);
+                }
+
+                
                 config.whitelisted.Add(playerData);
                 SaveConfig();
                 commandPlayer.Reply($"{foundPlayer.displayName} has been added to the whitelist");
+            }
+            else
+            {
+                commandPlayer.Reply("Player is already whitelisted");
             }
         }
 
