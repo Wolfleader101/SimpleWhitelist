@@ -20,6 +20,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="72af69f2-1412-4d7f-a830-d0c150096bb4" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.SimpleWhitelist/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SimpleWhitelist/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SimpleWhitelist.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SimpleWhitelist.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -82,7 +83,8 @@
       <option name="presentableId" value="Default" />
       <updated>1605575842468</updated>
       <workItem from="1605575853724" duration="3609000" />
-      <workItem from="1605581120300" duration="2227000" />
+      <workItem from="1605581120300" duration="2848000" />
+      <workItem from="1605612078993" duration="2457000" />
     </task>
     <servers />
   </component>
@@ -101,6 +103,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />

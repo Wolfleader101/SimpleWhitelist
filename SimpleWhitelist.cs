@@ -2,20 +2,21 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
+using Oxide.Core.Libraries;
 using Oxide.Core.Libraries.Covalence;
 using Steamworks.ServerList;
 using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("SimpleWhitelist", "Wolfleader101", "1.0.0")]
+    [Info("SimpleWhitelist", "Wolfleader101", "1.0.1")]
     [Description("Manage your whitelist with simple commands")]
     class SimpleWhitelist : CovalencePlugin
     {
         #region Variables
 
         private PluginConfig config;
-        public const string WhitelistPerms = "simplewhitelist.use";
+        private const string WhitelistPerms = "simplewhitelist.use";
 
         #endregion
 
@@ -24,10 +25,8 @@ namespace Oxide.Plugins
         private void Init()
         {
             config = Config.ReadObject<PluginConfig>();
-
-            permission.RegisterPermission(WhitelistPerms, this);
         }
-        
+
         private void OnPlayerConnected(IPlayer player)
         {
             PlayerData playerData = new PlayerData(player);
@@ -49,27 +48,27 @@ namespace Oxide.Plugins
 
         #region Methods
 
-        private void AddCommand(IPlayer commandPlayer,string steamIDString)
+        private void AddCommand(IPlayer commandPlayer, string steamIDString)
         {
             var foundConfigPlayer = config.whitelisted.Find(ply => ply.steamId == steamIDString);
             if (foundConfigPlayer == null)
             {
                 List<BasePlayer> playerList = BasePlayer.allPlayerList as List<BasePlayer>;
-                var foundPlayer = playerList.Find(ply => ply.UserIDString == steamIDString);
+                var foundPlayer = BasePlayer.Find(steamIDString);
                 PlayerData playerData;
                 if (foundPlayer == null)
                 {
-                     playerData = new PlayerData(steamIDString);
+                    playerData = new PlayerData(steamIDString);
                 }
                 else
                 {
-                     playerData = new PlayerData(foundPlayer);
+                    playerData = new PlayerData(foundPlayer);
                 }
 
-                
                 config.whitelisted.Add(playerData);
                 SaveConfig();
-                commandPlayer.Reply($"{foundPlayer.displayName} has been added to the whitelist");
+                commandPlayer.Reply(
+                    $"{foundPlayer.displayName ?? foundPlayer.UserIDString} has been added to the whitelist");
             }
             else
             {
@@ -77,23 +76,30 @@ namespace Oxide.Plugins
             }
         }
 
-        private void RemoveCommand(IPlayer commandPlayer,string steamIDString)
+        private void RemoveCommand(IPlayer commandPlayer, string steamIDString)
         {
-            
+            var foundConfigPlayer = config.whitelisted.Find(ply => ply.steamId == steamIDString);
+            if (foundConfigPlayer == null)
+            {
+                commandPlayer.Reply("The user is not whitelisted");
+                return;
+            }
+            config.whitelisted.Remove(foundConfigPlayer);
+            commandPlayer.Reply($"{foundConfigPlayer.name} has been removed from the whitelist");
         }
 
         private void HelpCommand(IPlayer commandPlayer)
         {
-            
+            commandPlayer.Reply("Incorrect Usage of the command. \nCorrect Usage: /whitelist <add|remove> <steam64>");
         }
+
         #endregion
 
         #region Commands
 
-        [Command("whitelist")]
+        [Command("whitelist"), Permission(WhitelistPerms)]
         private void WhitelistCommand(IPlayer player, string command, string[] args)
         {
-            if(!player.HasPermission(WhitelistPerms)) return;
             if (args.Length > 2 || args.Length < 2)
             {
                 HelpCommand(player);
@@ -107,8 +113,6 @@ namespace Oxide.Plugins
                     break;
                 case "remove":
                     RemoveCommand(player, args[1]);
-                    break;
-                case "help":
                     break;
                 default:
                     HelpCommand(player);
@@ -129,8 +133,13 @@ namespace Oxide.Plugins
         {
             return new PluginConfig
             {
-              whitelisted = new List<PlayerData>()
+                whitelisted = new List<PlayerData>()
             };
+        }
+
+        private void SaveConfig()
+        {
+            Config.WriteObject(config, true);
         }
 
         protected override void LoadDefaultConfig()
@@ -141,12 +150,15 @@ namespace Oxide.Plugins
         #endregion
 
         #region Classes
+
         private class PlayerData
         {
             public string name { get; set; }
             public string steamId { get; set; }
 
-            public PlayerData() { }
+            public PlayerData()
+            {
+            }
 
             public PlayerData(IPlayer player)
             {
