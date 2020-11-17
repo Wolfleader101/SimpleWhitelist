@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("SimpleWhitelist", "Wolfleader101", "1.0.1")]
+    [Info("SimpleWhitelist", "Wolfleader101", "1.0.2")]
     [Description("Manage your whitelist with simple commands")]
     class SimpleWhitelist : CovalencePlugin
     {
@@ -85,6 +85,7 @@ namespace Oxide.Plugins
                 return;
             }
             config.whitelisted.Remove(foundConfigPlayer);
+            SaveConfig();
             commandPlayer.Reply($"{foundConfigPlayer.name} has been removed from the whitelist");
         }
 
