@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Oxide.Core.Libraries;
 using Oxide.Core.Libraries.Covalence;
 using Steamworks.ServerList;
@@ -9,7 +10,7 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("SimpleWhitelist", "Wolfleader101", "1.0.2")]
+    [Info("SimpleWhitelist", "Wolfleader101", "1.0.3")]
     [Description("Manage your whitelist with simple commands")]
     class SimpleWhitelist : CovalencePlugin
     {
@@ -27,10 +28,10 @@ namespace Oxide.Plugins
             config = Config.ReadObject<PluginConfig>();
         }
 
-        private void OnPlayerConnected(IPlayer player)
+        private void OnPlayerConnected(BasePlayer player)
         {
             PlayerData playerData = new PlayerData(player);
-            var foundPlayer = config.whitelisted.Find(ply => ply.steamId == player.Id);
+            var foundPlayer = config.whitelisted.Find(ply => ply.steamId == player.UserIDString);
             if (foundPlayer == null)
             {
                 player.Kick("You are not whitelisted");
@@ -39,7 +40,7 @@ namespace Oxide.Plugins
 
             if (foundPlayer.name == string.Empty)
             {
-                foundPlayer.name = player.Name;
+                foundPlayer.name = player.displayName;
                 SaveConfig();
             }
         }
@@ -55,20 +56,11 @@ namespace Oxide.Plugins
             {
                 List<BasePlayer> playerList = BasePlayer.allPlayerList as List<BasePlayer>;
                 var foundPlayer = BasePlayer.Find(steamIDString);
-                PlayerData playerData;
-                if (foundPlayer == null)
-                {
-                    playerData = new PlayerData(steamIDString);
-                }
-                else
-                {
-                    playerData = new PlayerData(foundPlayer);
-                }
+                PlayerData playerData = foundPlayer == null ? new PlayerData(steamIDString) : new PlayerData(foundPlayer);
 
                 config.whitelisted.Add(playerData);
                 SaveConfig();
-                commandPlayer.Reply(
-                    $"{foundPlayer.displayName ?? foundPlayer.UserIDString} has been added to the whitelist");
+                commandPlayer.Reply($"{(playerData.name == string.Empty ? steamIDString : playerData.name)} has been added to the whitelist");
             }
             else
             {
