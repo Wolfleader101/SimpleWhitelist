@@ -35,6 +35,13 @@ namespace Oxide.Plugins
             if (foundPlayer == null)
             {
                 player.Kick("You are not whitelisted");
+                return;
+            }
+
+            if (foundPlayer.name == string.Empty)
+            {
+                foundPlayer.name = player.Name;
+                SaveConfig();
             }
         }
 
