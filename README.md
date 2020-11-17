@@ -8,7 +8,7 @@ To use this plugin simple run the `/whitelist` command
 
 Usage: `/whitelist <add|remove> <steam64>`
 
-**Please Note**: if you miss enter their steam64 it will not work. it does not do any checks for if it is a real ID.
+**Please Note**: If you miss enter their steam64 it will not work. It does not do any checks for if it is a real steam64 id.
 
 ## Configuration
 
