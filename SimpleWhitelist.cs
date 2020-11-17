@@ -1,7 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using Oxide.Core.Libraries.Covalence;
+using Steamworks.ServerList;
 using UnityEngine;
 
 namespace Oxide.Plugins
@@ -29,7 +31,6 @@ namespace Oxide.Plugins
         private void OnPlayerConnected(IPlayer player)
         {
             PlayerData playerData = new PlayerData(player);
-            // BasePlayer basePlayer = player.Object as BasePlayer;
             var foundPlayer = config.whitelisted.Find(ply => ply.steamId == player.Id);
             if (foundPlayer == null)
             {
@@ -41,17 +42,26 @@ namespace Oxide.Plugins
 
         #region Methods
 
-        private void AddCommand(string steamIDString)
+        private void AddCommand(IPlayer commandPlayer,string steamIDString)
+        {
+            var foundConfigPlayer = config.whitelisted.Find(ply => ply.steamId == steamIDString);
+            if (foundConfigPlayer == null)
+            {
+                List<BasePlayer> playerList = BasePlayer.allPlayerList as List<BasePlayer>;
+                var foundPlayer = playerList.Find(ply => ply.UserIDString == steamIDString);
+                PlayerData playerData = new PlayerData(foundPlayer);
+                config.whitelisted.Add(playerData);
+                SaveConfig();
+                commandPlayer.Reply($"{foundPlayer.displayName} has been added to the whitelist");
+            }
+        }
+
+        private void RemoveCommand(IPlayer commandPlayer,string steamIDString)
         {
             
         }
 
-        private void RemoveCommand(string steamIDString)
-        {
-            
-        }
-
-        private void HelpCommand()
+        private void HelpCommand(IPlayer commandPlayer)
         {
             
         }
@@ -63,24 +73,24 @@ namespace Oxide.Plugins
         private void WhitelistCommand(IPlayer player, string command, string[] args)
         {
             if(!player.HasPermission(WhitelistPerms)) return;
-            if (args.Length > 2)
+            if (args.Length > 2 || args.Length < 2)
             {
-                HelpCommand();
+                HelpCommand(player);
                 return;
             }
 
-                switch (args[0])
+            switch (args[0])
             {
                 case "add":
-                    AddCommand(args[1]);
+                    AddCommand(player, args[1]);
                     break;
                 case "remove":
-                    RemoveCommand();
+                    RemoveCommand(player, args[1]);
                     break;
                 case "help":
                     break;
                 default:
-                    HelpCommand();
+                    HelpCommand(player);
                     break;
             }
         }
@@ -127,6 +137,12 @@ namespace Oxide.Plugins
             {
                 name = player.displayName;
                 steamId = player.UserIDString;
+            }
+
+            public PlayerData(string userID)
+            {
+                name = String.Empty;
+                steamId = userID;
             }
         }
 
