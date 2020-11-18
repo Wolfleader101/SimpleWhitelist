@@ -27,21 +27,19 @@ namespace Oxide.Plugins
             config = Config.ReadObject<PluginConfig>();
         }
 
-        private void OnPlayerConnected(BasePlayer player)
+        object CanUserLogin(string name, string id, string ipAddress)
         {
-            PlayerData playerData = new PlayerData(player);
-            var foundPlayer = config.whitelisted.Find(ply => ply.steamId == player.UserIDString);
+            PlayerData playerData = new PlayerData(id);
+            var foundPlayer = config.whitelisted.Find(ply => ply.steamId == id);
             if (foundPlayer == null)
             {
-                player.Kick("You are not whitelisted");
-                return;
+                return "You are not whitelisted";
             }
 
-            if (foundPlayer.name == string.Empty)
-            {
-                foundPlayer.name = player.displayName;
-                SaveConfig();
-            }
+            if (foundPlayer.name != string.Empty) return null;
+            foundPlayer.name = name;
+            SaveConfig();
+            return null;
         }
 
         #endregion
