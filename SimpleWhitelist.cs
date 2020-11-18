@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("SimpleWhitelist", "Wolfleader101", "1.0.3")]
+    [Info("SimpleWhitelist", "Wolfleader101", "1.0.4")]
     [Description("Manage your whitelist with simple commands")]
     class SimpleWhitelist : CovalencePlugin
     {
